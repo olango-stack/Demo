@@ -1,0 +1,13 @@
+{
+    "functionVersion": "$LATEST",
+    "functionName": "example",
+
+    "memoryLimitInMB": "128",
+
+    "logGroupName": "/aws/lambda/example",
+
+    "logStreamName": "2023/05/02/[$LATEST]b8a62bfe483e468d86eb11708061d4",
+    "invokedFunctionArn": "arn:aws:lambda:us-east-1:901952209192:function:example",
+
+    "awsRequestId": "c285ccd7-24ef-4d58-899b-37dc4ccc62"
+}

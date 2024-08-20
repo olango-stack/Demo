@@ -1,0 +1,280 @@
+terraform {
+  
+}
+
+resource "aws_instance" "example" {
+    count = 3
+    # other resource configurations
+}
+
+resource "aws_instance" "example" {
+    provider = aws.us-west-1
+    # other resource configurations
+}
+
+
+resource "aws_instance" "example" {
+    depends_on = [aws_security_group.example]
+    #other resource configurations  
+}
+
+
+resource "aws_instance" "example" {
+    for_each = {
+      "instance1" = {type = "t2.micro"}
+      "instance2" = {type = "t2.nano"} 
+    }
+    instance_type = each.value.type
+    #other resource configurations
+}
+
+
+resource "aws_instance" "example" {
+    provider_override = aws.eu_central-1
+    #other resource configurations
+  
+}
+
+#Module compatibility across different Terraform versions
+#Version constraints
+module "example" {
+  source = "namespace/module/registry"
+  version = "~> 2.0"
+}
+
+#Conditionals within a module - control resource creation, config and behavior
+
+resource "aws_instance" "example" {
+    count = var.create_instance ? 1 : 0
+    #other resource configurations
+}
+
+resource "aws_instance" "example" {
+    for_each = var.create_instance ? toset(["instance1", "instance2"]):
+toset([])
+    # Use each.key to access each instance
+    instance_type = var.instance_type[each.key]
+    # other resource configurations
+}
+
+#Conditional Expressions
+# within resource configurations to set values based on specific conditions
+
+resource "aws_instance" "example" {
+    instance_type = var.environment == "production" ? "t2.large" : "t2.micro"
+
+    # other resource configurations
+  
+}
+
+#locals block to define values based on conditional expressions
+
+locals {
+    instance_type = var.environment == "production" ? "t2.large" : "t2.micro"
+}
+
+resource "aws_instance" "example" {
+    instance_type = local.instance_type
+    #other resource configurations
+}
+
+#terraform.workspace to conditionally configure resources or modules
+
+resource "aws_instance" "example" {
+    count = terraform.workspace == "development" ? 3 : 1
+    #other resource configurations
+  
+}
+
+
+#Maps and Lists to pass multiple values to a module
+
+#Map variable defined in the root module. Allows you to pass multiple key_value pairs to a module
+
+
+# main.tf
+module "example" {
+    source = "./modules/example"
+
+    # Define a map variable
+    instance_config = {
+        instance_type = "t2.micro"
+        ami_id = "ami-12345678"
+        subnet_id = "subnet-12345678"
+    }
+}
+
+#In the module
+
+#modules/example/main.tf 
+
+#Declare the input variable
+variable "instance_config" {
+    type = map
+}
+
+#Use the values from the map
+resource "aws_instance" "example" {
+    instance_type = var.instance_config["instance_type"]
+    ami = var.instance_config["ami_id"]
+    subnet_id = var.instance_config["subnet_id"]
+}
+
+
+#Using Lists
+
+#Lists allow you to pass ordered collections of values to a module
+
+# main.tf
+ module "example" {
+    source = "./modules/example"
+
+    #Define a list variable
+    instance_types = ["t2.micro", "t2.nano", "t2.small"]
+}
+
+
+#In the module
+
+# Declare the input variable
+
+variable "instance_types" {
+    type = list(string)
+}
+
+#Iterate over the list values
+
+resource "aws_instance" "example" {
+    count = length(var.instance_types)
+    instance_type = var.instance_types[count.index]
+    # other resource configurations
+}
+
+#Terraform Backend Configuration - specify within the terraform block
+#Define where terraform stores its state file for resources managed by the module
+#Customise state management for the module independently of the root module
+
+
+terraform {
+  backend "s3" {
+    bucket = "example-bucket"
+    key = "module-state/terraform.tfstate"
+    region = "us-west-2"
+  }
+}
+
+#Provider Configuration
+#configure provider settings within the terraform block
+#specify provider-specific configurations for resources managed by module
+
+terraform {
+  required_providers {
+    aws = {
+        source = "hashicorp/aws"
+        version = "~> 3.0"
+    }
+  }
+}
+
+#Variable Definitions
+#Define module-specific variables within the terraform block to provide default values
+#Allows you to encapsulate variable definitions within the module itself
+
+terraform {
+  variable "environment" {
+    type = string
+    default = "production"
+  }
+}
+
+#Module version Constraints
+terraform {
+  required_version = ">= 0.15"
+}
+
+#Debugging within a module
+
+# - Enable Debug Output
+
+bash
+export TF_LOG=Debug
+
+# - Review Terraform Logs(pinpoint where issues occur)
+bash 
+
+terraform plan -out=tfplan 2> terraform.log
+
+
+
+#Terraform console - evaluate expressions, inspect resource attributes, variables, outputs
+#validate assumptions, troubleshoot configuration settings
+
+bash 
+
+terraform console
+
+
+#Check Resource state
+#Inspect current state of resources managed by Terraform
+# Verify attributes, dependencies & relationships
+
+bash 
+
+terraform state list
+terraform state show <resource_name>
+
+#Validate Configuration syntax
+#check syntax and structure of Terraform configuration files for errors or typos
+
+bash 
+
+terraform validate
+
+#Terraform plan - generate an execution plan & preview changes that Terraform will make to your infrastructure
+#Any unexpected additions, modifications or deletion of resources
+bash
+
+terraform plan
+
+
+#Inspect Generated Terraform Configuration  files(.tf files)
+#Review Module Dcoumentation
+#Debug incrementally- isolate specific sections of module's config
+#Consult community resources
+
+
+
+#Module Composition
+
+#Combine multiple modules together to  build more complex infrastructure configurations
+#Use smaller, reusable modules as building blocks for complex infra setusps
+
+#Each module can focus on single responsibility(networking, compute, storage)
+
+#module for creating a vpc
+
+module "vpc" {
+    source = "./modules/vpc"
+    #VPC Config
+}
+
+module "compute" {
+    source = "./modules/compute"
+    #Compute instance configuration
+}
+
+module "security" {
+    source = "./modules/security"
+    #security group configuration
+}
+
+module "app" {
+    source = "./modules/app"
+    #app deployment configuration
+}
+
+
+
+
+
+

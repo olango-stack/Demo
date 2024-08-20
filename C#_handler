@@ -1,0 +1,23 @@
+//Class is defined to represent the event
+//The JSON serializer used to translate the JSON input into an object of that type
+
+using Amazon.Lambda.Core;
+
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
+
+namespace example
+{
+    public class MultiplyInput
+    {
+        public int X { get; set; }
+        public int Y {get; set;  }
+    }
+    public class Function
+    {
+        public int FunctionHandler(MultiplyInput input, ILambdaContext context)
+        {
+            int result = input.X * input.Y;
+            return result;
+        }
+    }
+}

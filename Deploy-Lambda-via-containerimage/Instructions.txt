@@ -1,0 +1,23 @@
+After creating the docker file
+Now build the image for linux platform with calculator tag
+
+docker build --platform linux/amd64 -t calculator:v1 .
+
+
+
+Now, we can run that Lambda function image on our local Docker environment.
+We can specify the port mapping(which means port 9,000,
+on the local machine points to port 8080 in the image)
+and we tell it which tag to run.
+
+docker run -p 9000:8080 calculator:v1 
+
+Above starts the lambda environment
+
+
+Now to test
+curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"x":62, "y":21}
+
+'Date' here is the version of the api
+
+

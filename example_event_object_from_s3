@@ -1,0 +1,25 @@
+// Example of an event that S3 will output when an object is created if configured to do so
+
+
+{
+    "Records": [
+        {
+            "eventSource": "aws:s3",
+            "eventName": "ObjectCreated:Put",
+            ...
+            "s3": {
+                ...
+                "bucket": {
+                    "name": "makit-bucket",
+                    "arn": "arn:aws:s3:::makit-bucket"
+                    ...
+                },
+                "object": {
+                    "key": "myobject",
+                    "size": 512
+                }
+            }
+        }
+    ]
+}
+
