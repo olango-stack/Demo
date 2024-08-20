@@ -22,3 +22,7 @@ print(y)
 with open("snsevent.json", "r") as f:
     z = json.load(f)
 print(z["Records"])
+
+
+def x():
+    print("Mercy")
